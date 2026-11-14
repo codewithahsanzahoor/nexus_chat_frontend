@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Chat</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0db9f2",
+            "accent-purple": "#a855f7",
+            "background-dark": "var(--bg-primary)",
+            "surface-dark": "var(--bg-secondary)",
+            "border-dark": "var(--border-color)",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg-primary: #101e22;
+      --bg-secondary: #162529;
+      --border-color: #1f3338;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-on-primary: #ffffff;
+      --glass-bg: rgba(22, 37, 41, 0.7);
+    }
+
+    html:not(.dark) {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --border-color: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-on-primary: #ffffff;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    /* Global text color overrides for light mode */
+    html:not(.dark) .text-white:not(.bg-primary *):not(.bg-accent-purple *) { 
+      color: var(--text-primary) !important; 
+    }
+    html:not(.dark) .text-slate-200 { color: var(--text-primary) !important; }
+    html:not(.dark) .text-slate-300 { color: #475569 !important; }
+    html:not(.dark) .text-slate-400 { color: var(--text-secondary) !important; }
+    html:not(.dark) .text-slate-500 { color: #94a3b8 !important; }
+    
+    /* Ensure primary buttons and accent bubbles keep white text */
+    .bg-primary, .bg-accent-purple {
+      color: var(--text-on-primary) !important;
+    }
+
+    /* Background and border overrides */
+    html:not(.dark) .bg-background-dark\/50 { background-color: rgba(241, 245, 249, 0.5) !important; }
+    html:not(.dark) .bg-surface-dark\/50 { background-color: rgba(248, 250, 252, 0.5) !important; }
+    html:not(.dark) .hover\:bg-background-dark\/50:hover { background-color: rgba(241, 245, 249, 0.5) !important; }
+    html:not(.dark) .hover\:bg-surface-dark:hover { background-color: #f1f5f9 !important; }
+    html:not(.dark) .bg-surface-dark\/80 { background-color: rgba(241, 245, 249, 0.8) !important; }
+
+    /* Glass Effect Definition */
+    .glass-effect {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Neon Glows */
+    .neon-glow {
+      box-shadow: 0 0 15px rgba(13, 185, 242, 0.3);
+    }
+    .neon-purple-glow {
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+    }
+
+    /* Input focus and visibility fixes */
+    input {
+      color: var(--text-primary) !important;
+      background-color: var(--bg-primary) !important;
+    }
+    
+    input::placeholder {
+      color: var(--text-secondary) !important;
+      opacity: 0.6;
+    }
+
+    /* Fix for browser autofill white background */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active{
+        -webkit-box-shadow: 0 0 0 30px var(--bg-primary) inset !important;
+        -webkit-text-fill-color: var(--text-primary) !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="antialiased overflow-hidden h-screen">
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
