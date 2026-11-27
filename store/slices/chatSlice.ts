@@ -60,7 +60,7 @@ const chatSlice = createSlice({
     },
     updateUserStatus: (
       state,
-      action: PayloadAction<{ userId: string; status: "online" | "offline" }>,
+      action: PayloadAction<{ userId: string; status: "online" | "offline" | "typing" }>,
     ) => {
       state.conversations.forEach((conv) => {
         conv.participants.forEach((p) => {

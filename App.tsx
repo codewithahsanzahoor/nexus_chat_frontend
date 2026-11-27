@@ -17,6 +17,7 @@ const App: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
@@ -52,7 +53,7 @@ const App: React.FC = () => {
   useEffect(() => {
     socket.on('receive_message', (data: { conversationId: string; message: Message }) => {
       console.log('Message Received:', data);
-      dispatch(addMessage(data));
+      dispatch(addMessage({ conversationId: data.conversationId, message: data.message }));
     });
 
     socket.on('user_typing', (data: { conversationId: string; isTyping: boolean }) => {
@@ -61,7 +62,13 @@ const App: React.FC = () => {
       }
     });
 
-    socket.on('user_status_changed', (data: { userId: string; status: 'online' | 'offline' }) => {
+    socket.on('user_stop_typing', (data: { conversationId: string }) => {
+      if (data.conversationId === activeConversationId) {
+        setIsTyping(false);
+      }
+    });
+
+    socket.on('user_status_changed', (data: { userId: string; status: 'online' | 'offline' | 'typing' }) => {
       console.log('Status Changed:', data);
       dispatch(updateUserStatus(data));
       setAllUsers(prev => prev.map(u => u._id === data.userId ? { ...u, status: data.status } : u));
@@ -70,6 +77,7 @@ const App: React.FC = () => {
     return () => {
       socket.off('receive_message');
       socket.off('user_typing');
+      socket.off('user_stop_typing');
       socket.off('user_status_changed');
     };
   }, [dispatch, activeConversationId]);
@@ -94,6 +102,29 @@ const App: React.FC = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [conversations, activeConversationId]);
+
+  // Handle typing events
+  useEffect(() => {
+    if (inputText.trim() && activeConversationId && isLoggedIn) {
+      socket.emit('typing', { conversationId: activeConversationId });
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit('stop_typing', { conversationId: activeConversationId });
+      }, 2000);
+    } else if (!inputText.trim() && activeConversationId && isLoggedIn) {
+      socket.emit('stop_typing', { conversationId: activeConversationId });
+    }
+
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [inputText, activeConversationId, isLoggedIn]);
 
   const fetchConversations = async () => {
     try {
